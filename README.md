@@ -1,70 +1,80 @@
-# st - simple terminal
+The [suckless terminal (st)](https://st.suckless.org/) with some additional features that make it literally the best terminal emulator ever:
 
-This is a clone of [suckless.org](http://suckless.org) the coolest terminal client **st**.
-Light, stable, simple and fast. **tmux** brings in all other needed features.
+## Unique features (using dmenu)
 
-## Customizations
++ **follow urls** by pressing `alt-l`
++ **copy urls** in the same way with `alt-y`
++ **copy the output of commands** with `alt-o`
 
-- **Inconsolata** font usage.
-- **solarized** dark color scheme.
-- **transparency** support added.
+## Bindings for
 
-## Screen
++ **scrollback** with `alt-↑/↓` or `alt-pageup/down` or `shift` while scrolling the mouse
++ OR **vim-bindings**: scroll up/down in history with `alt-k` and `alt-j`. Faster with `alt-u`/`alt-d`.
++ **zoom/change font size**: same bindings as above, but holding down shift as well. `alt-home` returns to default
++ **copy text** with `alt-c`, **paste** is `alt-v` or `shift-insert`
 
-![Screenshot](https://raw.github.com/l3pp4rd/st/master/screen.png)
+## Pretty stuff
 
-## Requirements
++ Compatibility with `Xresources` and `pywal` for dynamic colors.
++ Default [gruvbox](https://github.com/morhetz/gruvbox) colors otherwise.
++ Transparency/alpha, which is also adjustable from your `Xresources`.
++ Default font is system "mono" at 14pt, meaning the font will match your system font.
 
-In order to build st you need:
+## Other st patches
 
-- Xlib header files - location of these might differ, edit config.mk
-- xft lib headers.
-- Inconsolata.ttf fonts, unless you change it in config.h
++ Vertcenter
++ Scrollback
++ font2
++ updated to latest version 0.8.2
 
-## Installation
+## Installation for newbs
 
-Edit config.mk to match your local setup (**st** is installed into the
-**/usr/local** namespace by default).
+```
+git clone https://github.com/LukeSmithxyz/st
+cd st
+sudo make install
+```
 
-**NOTE:** to have unicode character support, install **freetype2** library
-headers.
+Users of Arch-based distros can also install it from the AUR as [st-luke-git](https://aur.archlinux.org/packages/st-luke-git/).
 
-**NOTE:** **ranger** file manager may not preview images well, when having
-transparency enabled.
+Obviously, `make` is required to build. `fontconfig` is required for the default build, since it asks `fontconfig` for your system monospace font.  It might be obvious, but `libX11` and `libXft` are required as well. Chances are, you have all of this installed already.
 
-## Transparency
+On OpenBSD, be sure to edit `config.mk` first and remove `-lrt` from the `$LIBS` before compiling.
 
-You need to run **compton** or **xcompmgr** in order to have transparent
-terminal.
+Be sure to have a composite manager (`xcompmgr`, `picom`, etc.) running if you want transparency.
 
-### Ubuntu required libraries
+## How to configure dynamically with Xresources
 
-    apt-get install libx11-dev libxext-dev libxft-dev fonts-inconsolata
+For many key variables, this build of `st` will look for X settings set in either `~/.Xdefaults` or `~/.Xresources`. You must run `xrdb` on one of these files to load the settings.
 
-Afterwards enter the following command to build and install st (if
-necessary as root):
+For example, you can define your desired fonts, transparency or colors:
 
-    make clean install
+```
+*.font:	Liberation Mono:pixelsize=12:antialias=true:autohint=true;
+*.alpha: 0.9
+*.color0: #111
+...
+```
 
-**NOTE** concerning [inconsolata font
-changes](https://bbs.archlinux.org/viewtopic.php?id=206805), recently it
-got bold font support and if you had hinstyle set to **none** it should
-not make any impact. Otherwise you may need to set it to none.
+The `alpha` value (for transparency) goes from `0` (transparent) to `1` (opaque).
 
-## Running st
+### Colors
 
-If you did not install st with make clean install, you must compile
-the st terminfo entry with the following command:
+To be clear about the color settings:
 
-    tic -s st.info
+- This build will use gruvbox colors by default and as a fallback.
+- If there are Xresources colors defined, those will take priority.
+- But if `wal` has run in your session, its colors will take priority.
 
-Run it with tmux:
+Note that when you run `wal`, it will negate the transparency of existing windows, but new windows will continue with the previously defined transparency.
 
-    st -e tmux
+## Notes on Emojis and Special Characters
 
-See the man page for additional details.
+If st crashes when viewing emojis, install [libxft-bgra](https://aur.archlinux.org/packages/libxft-bgra/) from the AUR.
 
-## Credits
+Note that some special characters may appear truncated if too wide. You might want to manually set your prefered emoji/special character font to a lower size in the `config.h` file to avoid this. By default, JoyPixels is used at a smaller size than the usual text.
 
-Based on Aurélien APTEL <aurelien dot aptel at gmail dot com> bt source code.
+## Contact
 
+- Luke Smith <luke@lukesmith.xyz>
+- [https://lukesmith.xyz](https://lukesmith.xyz)
